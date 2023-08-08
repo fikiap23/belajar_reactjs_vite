@@ -1,13 +1,4 @@
-/* eslint-disable react/prop-types */
-// function komponen
-const Button = (props) => {
-  const { children = 'ini tombol', bgcolor = 'bg-slate-700' } = props
-  return (
-    <button className={`${bgcolor} text-white py-2 px-4 rounded`} type="submit">
-      {children}
-    </button>
-  )
-}
+import Button from './components/Elements/Button/index.jsx'
 
 function App() {
   return (
