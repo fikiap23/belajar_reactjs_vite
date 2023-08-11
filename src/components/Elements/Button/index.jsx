@@ -13,9 +13,7 @@ const Button = (props) => {
     <button
       className={`${classname} text-white py-2 px-4 rounded`}
       type={type}
-      onClick={() => {
-        onClick()
-      }}
+      onClick={onClick}
     >
       {children}
     </button>
