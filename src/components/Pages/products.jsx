@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import Button from '../Elements/Button'
 import CardProduct from '../Fragments/CardProduct'
+import Counter from '../Fragments/Counter'
 
 const products = [
   {
@@ -70,6 +71,9 @@ const ProductsPage = () => {
             </CardProduct>
           )
         })}
+      </div>
+      <div className="flex justify-center mt-3">
+        <Counter></Counter>
       </div>
     </Fragment>
   )
