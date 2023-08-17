@@ -81,6 +81,17 @@ const ProductsPage = () => {
     localStorage.setItem('cart', JSON.stringify(cartRef.current))
   }
 
+  const totalPriceRef = useRef(null)
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      totalPriceRef.current.style.display = 'table-row'
+    } else {
+      totalPriceRef.current.style.display = 'none'
+    }
+  }, [cart])
+  console.log(totalPriceRef)
+
   return (
     <Fragment>
       <div className="flex justify-end h-16 bg-blue-600 text-white items-center px-10 mb-5">
@@ -101,7 +112,7 @@ const ProductsPage = () => {
                 <CardProduct.Footer
                   price={product.price}
                   id={product.id}
-                  handleAddToCart={handleAddToCartRef}
+                  handleAddToCart={handleAddToCart}
                 ></CardProduct.Footer>
               </CardProduct>
             )
@@ -120,7 +131,7 @@ const ProductsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {cartRef.current.map((item) => {
+              {cart.map((item) => {
                 const product = products.find((p) => p.id === item.id)
                 return (
                   <tr key={item.id}>
@@ -141,7 +152,7 @@ const ProductsPage = () => {
                   </tr>
                 )
               })}
-              {/* <tr className="font-bold">
+              <tr className="font-bold" ref={totalPriceRef}>
                 <td colSpan={3}>Total Price</td>
                 <td>
                   {totalPrice.toLocaleString('id-ID', {
@@ -149,7 +160,7 @@ const ProductsPage = () => {
                     currency: 'IDR',
                   })}
                 </td>
-              </tr> */}
+              </tr>
             </tbody>
           </table>
         </div>
