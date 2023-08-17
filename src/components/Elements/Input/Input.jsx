@@ -1,5 +1,7 @@
+import { forwardRef } from 'react'
+
 /* eslint-disable react/prop-types */
-const Input = (props) => {
+const Input = forwardRef((props, ref) => {
   const { type, placeholder, id, name } = props
   return (
     <input
@@ -8,8 +10,11 @@ const Input = (props) => {
       placeholder={placeholder}
       id={id}
       name={name}
+      ref={ref}
     />
   )
-}
+})
+
+Input.displayName = 'Input' // Add this line to set the display name
 
 export default Input
