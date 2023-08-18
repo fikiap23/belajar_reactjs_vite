@@ -1,18 +1,27 @@
 import { Fragment, useState, useEffect, useRef } from 'react'
+import { getUsername } from '../../services/auth.service'
 import { getProducts } from '../../services/product.service'
 import Button from '../Elements/Button'
 import CardProduct from '../Fragments/CardProduct'
-
-const email = localStorage.getItem('email')
 
 const ProductsPage = () => {
   const [cart, setCart] = useState([])
   const [totalPrice, setTotalPrice] = useState(0)
   const [products, setProducts] = useState([])
+  const [username, setUsername] = useState('')
 
   // didMount
   useEffect(() => {
     setCart(JSON.parse(localStorage.getItem('cart')) || [])
+  }, [])
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      setUsername(getUsername(token))
+    } else {
+      window.location.href = '/login'
+    }
   }, [])
 
   // didUpdate
@@ -34,8 +43,7 @@ const ProductsPage = () => {
   })
 
   const handlerLogout = () => {
-    localStorage.removeItem('email')
-    localStorage.removeItem('password')
+    localStorage.removeItem('token')
     window.location.href = '/login'
   }
 
@@ -64,7 +72,7 @@ const ProductsPage = () => {
   return (
     <Fragment>
       <div className="flex justify-end h-16 bg-blue-600 text-white items-center px-10 mb-5">
-        <p>{email}</p>
+        <p>{username}</p>
         <Button classname="bg-red-600 ml-5" onClick={handlerLogout}>
           Logout
         </Button>
