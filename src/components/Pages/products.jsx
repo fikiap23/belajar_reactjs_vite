@@ -1,42 +1,14 @@
 import { Fragment, useState, useEffect, useRef } from 'react'
+import { getProducts } from '../../services/product.service'
 import Button from '../Elements/Button'
 import CardProduct from '../Fragments/CardProduct'
-
-const products = [
-  {
-    id: 1,
-    name: 'Sepatu lama',
-    price: 100000,
-    image: '/images/product1.jpg',
-    description: ` Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-          alias magnam tempore. Obcaecati, autem fugit nobis numquam perferendis
-          vel, ducimus quod cupiditate nulla nam quae, consectetur accusantium
-          impedit ipsum optio.`,
-  },
-  {
-    id: 2,
-    name: 'Sepatu baru',
-    price: 200000,
-    image: '/images/product1.jpg',
-    description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.',
-  },
-  {
-    id: 3,
-    name: 'Sepatu adidas',
-    price: 100000,
-    image: '/images/product1.jpg',
-    description: ` Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-          alias magnam tempore. Obcaecati, autem fugit nobis numquam perferendis
-          vel, ducimus quod cupiditate nulla nam quae, consectetur accusantium
-          impedit ipsum optio.`,
-  },
-]
 
 const email = localStorage.getItem('email')
 
 const ProductsPage = () => {
   const [cart, setCart] = useState([])
   const [totalPrice, setTotalPrice] = useState(0)
+  const [products, setProducts] = useState([])
 
   // didMount
   useEffect(() => {
@@ -45,7 +17,7 @@ const ProductsPage = () => {
 
   // didUpdate
   useEffect(() => {
-    if (cart.length > 0) {
+    if (products.length > 0 && cart.length > 0) {
       const sum = cart.reduce((total, item) => {
         const product = products.find((p) => p.id === item.id)
         return total + product.price * item.qty
@@ -53,7 +25,13 @@ const ProductsPage = () => {
       setTotalPrice(sum)
       localStorage.setItem('cart', JSON.stringify(cart))
     }
-  }, [cart])
+  }, [cart, products])
+
+  useEffect(() => {
+    getProducts((data) => {
+      setProducts(data)
+    })
+  })
 
   const handlerLogout = () => {
     localStorage.removeItem('email')
@@ -73,14 +51,6 @@ const ProductsPage = () => {
     }
   }
 
-  // useRef
-  const cartRef = useRef(JSON.parse(localStorage.getItem('cart')) || [])
-
-  const handleAddToCartRef = (id) => {
-    cartRef.current = [...cartRef.current, { id, qty: 1 }]
-    localStorage.setItem('cart', JSON.stringify(cartRef.current))
-  }
-
   const totalPriceRef = useRef(null)
 
   useEffect(() => {
@@ -90,7 +60,6 @@ const ProductsPage = () => {
       totalPriceRef.current.style.display = 'none'
     }
   }, [cart])
-  console.log(totalPriceRef)
 
   return (
     <Fragment>
@@ -102,21 +71,24 @@ const ProductsPage = () => {
       </div>
       <div className="flex justify-center">
         <div className="w-3/5 flex flex-wrap">
-          {products.map((product) => {
-            return (
-              <CardProduct key={product.id}>
-                <CardProduct.Header image={product.image}></CardProduct.Header>
-                <CardProduct.Body name={product.name}>
-                  {product.description}
-                </CardProduct.Body>
-                <CardProduct.Footer
-                  price={product.price}
-                  id={product.id}
-                  handleAddToCart={handleAddToCart}
-                ></CardProduct.Footer>
-              </CardProduct>
-            )
-          })}
+          {products.length > 0 &&
+            products.map((product) => {
+              return (
+                <CardProduct key={product.id}>
+                  <CardProduct.Header
+                    image={product.image}
+                  ></CardProduct.Header>
+                  <CardProduct.Body name={product.title}>
+                    {product.description}
+                  </CardProduct.Body>
+                  <CardProduct.Footer
+                    price={product.price}
+                    id={product.id}
+                    handleAddToCart={handleAddToCart}
+                  ></CardProduct.Footer>
+                </CardProduct>
+              )
+            })}
         </div>
         <div className="w-2/5">
           <h1 className="text-3xl font-bold text-blue-600 ml-5 mb-2">Cart</h1>
@@ -131,27 +103,28 @@ const ProductsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {cart.map((item) => {
-                const product = products.find((p) => p.id === item.id)
-                return (
-                  <tr key={item.id}>
-                    <td>{product.name}</td>
-                    <td>{item.qty}</td>
-                    <td>
-                      {product.price.toLocaleString('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                      })}
-                    </td>
-                    <td>
-                      {(product.price * item.qty).toLocaleString('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                      })}
-                    </td>
-                  </tr>
-                )
-              })}
+              {products.length > 0 &&
+                cart.map((item) => {
+                  const product = products.find((p) => p.id === item.id)
+                  return (
+                    <tr key={item.id}>
+                      <td>{product.title}</td>
+                      <td>{item.qty}</td>
+                      <td>
+                        {product.price.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        })}
+                      </td>
+                      <td>
+                        {(product.price * item.qty).toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        })}
+                      </td>
+                    </tr>
+                  )
+                })}
               <tr className="font-bold" ref={totalPriceRef}>
                 <td colSpan={3}>Total Price</td>
                 <td>
