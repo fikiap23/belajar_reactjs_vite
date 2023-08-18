@@ -60,7 +60,6 @@ const ProductsPage = () => {
       totalPriceRef.current.style.display = 'none'
     }
   }, [cart])
-  console.log(totalPriceRef)
 
   return (
     <Fragment>
